@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <title>Princess Diane | Photo Album</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #fce4ec;
+            color: #4a1525;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* =========================
+            DESKTOP NAVIGATION
+        ========================= */
+
+        nav {
+            background: #f8bbd0;
+            padding: 18px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(216, 27, 96, 0.15);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 2px solid #f48fb1;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: #880e4f;
+            margin: 0 15px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        nav a:hover {
+            color: #d81b60;
+        }
+
+        /* =========================
+            PAGE SYSTEM
+        ========================= */
+
+        .page {
+            display: none;
+            min-height: calc(100vh - 60px);
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        /* =========================
+            HOME
+        ========================= */
+
+        #home {
+            background: linear-gradient(135deg, #f8bbd0, #fce4ec);
+            text-align: center;
+            padding: 100px 20px;
+            min-height: 90vh;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #home.active {
+            display: flex;
+        }
+
+        .home-content {
+            max-width: 800px;
+        }
+
+        .home-content h1 {
+            font-size: 55px;
+            color: #880e4f;
+            margin-bottom: 15px;
+        }
+
+        .home-content p {
+            font-size: 20px;
+            color: #ad1457;
+            margin-bottom: 30px;
+        }
+
+        .heart {
+            font-size: 45px;
+            color: #e91e63;
+            margin: 10px;
+        }
+
+        .capy-badge {
+            font-size: 50px;
+            margin-bottom: 15px;
+        }
+
+        .view-button {
+            display: inline-block;
+            padding: 14px 30px;
+            background: #ec407a;
+            color: white;
+            text-decoration: none;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: 0 5px 15px rgba(233, 30, 99, 0.3);
+            font-weight: bold;
+        }
+
+        .view-button:hover {
+            background: #d81b60;
+            transform: scale(1.05);
+        }
+
+        /* =========================
+            ABOUT
+        ========================= */
+
+        #about {
+            padding: 70px 20px;
+        }
+
+        .about {
+            max-width: 900px;
+            margin: auto;
+            padding: 50px;
+            background: #ffffff;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 5px 20px rgba(244, 143, 177, 0.3);
+            border: 2px solid #f8bbd0;
+        }
+
+        .about h1 {
+            color: #880e4f;
+            font-size: 38px;
+            margin-bottom: 25px;
+        }
+
+        .about h2 {
+            color: #ad1457;
+            margin-bottom: 15px;
+        }
+
+        .about p {
+            line-height: 1.8;
+            color: #4a1525;
+            font-size: 17px;
+        }
+
+        .about-heart {
+            font-size: 40px;
+            color: #ec407a;
+            margin-bottom: 15px;
+        }
+
+        /* =========================
+            ALBUM
+        ========================= */
+
+        #album {
+            padding: 60px 20px;
+            background: #fce4ec;
+        }
+
+        .album {
+            max-width: 1100px;
+            margin: auto;
+        }
+
+        .album h1 {
+            text-align: center;
+            color: #880e4f;
+            font-size: 38px;
+            margin-bottom: 25px;
+        }
+
+        /* =========================
+            SEARCH BAR
+        ========================= */
+
+        .search-container {
+            max-width: 600px;
+            margin: 0 auto 40px;
+            position: relative;
+        }
+
+        #searchInput {
+            width: 100%;
+            padding: 16px 50px 16px 20px;
+            border: 2px solid #f48fb1;
+            border-radius: 30px;
+            background: #ffffff;
+            color: #880e4f;
+            font-size: 16px;
+            outline: none;
+            box-shadow: 0 4px 15px rgba(244, 143, 177, 0.2);
+        }
+
+        #searchInput:focus {
+            border-color: #ec407a;
+        }
+
+        .search-icon {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 22px;
+            color: #ec407a;
+        }
+
+        .search-result {
+            text-align: center;
+            color: #ad1457;
+            margin-top: -25px;
+            margin-bottom: 25px;
+            font-size: 14px;
+        }
+
+        /* =========================
+            PHOTO GRID
+        ========================= */
+
+        .photo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 25px;
+        }
+
+        .photo-card {
+            background: #ffffff;
+            padding: 12px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(244, 143, 177, 0.3);
+            transition: 0.3s;
+            overflow: hidden;
+            border: 2px solid #f8bbd0;
+            cursor: pointer;
+        }
+
+        .photo-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 10px 25px rgba(233, 30, 99, 0.25);
+        }
+
+        .photo-card img {
+            width: 100%;
+            height: 280px;
+            object-fit: cover;
+            border-radius: 10px;
+            display: block;
+        }
+
+        .photo-card h3 {
+            text-align: center;
+            color: #880e4f;
+            margin-top: 15px;
+        }
+
+        .photo-card p {
+            text-align: center;
+            font-size: 14px;
+            color: #ad1457;
+            margin-top: 7px;
+            margin-bottom: 8px;
+        }
+
+        /* =========================
+            MODAL MESSAGE POPUP
+        ========================= */
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(74, 21, 37, 0.6);
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background: #ffffff;
+            border: 2px solid #f48fb1;
+            padding: 30px;
+            border-radius: 20px;
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            position: relative;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-content p {
+            color: #4a1525;
+            font-size: 18px;
+            line-height: 1.6;
+            margin-top: 15px;
+            font-style: italic;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 24px;
+            color: #ad1457;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .close-modal:hover {
+            color: #ec407a;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        /* =========================
+            NO RESULTS
+        ========================= */
+
+        #noResults {
+            display: none;
+            text-align: center;
+            padding: 50px 20px;
+            color: #880e4f;
+        }
+
+        #noResults h2 {
+            margin-bottom: 10px;
+        }
+
+        /* =========================
+            MEMORIES
+        ========================= */
+
+        #memories {
+            padding: 70px 20px;
+            background: linear-gradient(135deg, #fce4ec, #f8bbd0);
+        }
+
+        .memories-container {
+            max-width: 850px;
+            margin: auto;
+        }
+
+        .memories-container h1 {
+            text-align: center;
+            color: #880e4f;
+            font-size: 38px;
+            margin-bottom: 40px;
+        }
+
+        .memory-card {
+            background: #ffffff;
+            padding: 30px;
+            margin-bottom: 25px;
+            border-radius: 20px;
+            box-shadow: 0 5px 20px rgba(244, 143, 177, 0.25);
+            text-align: center;
+            border: 2px solid #f8bbd0;
+        }
+
+        .memory-card h2 {
+            color: #880e4f;
+            margin-bottom: 12px;
+        }
+
+        .memory-card p {
+            color: #4a1525;
+            line-height: 1.7;
+        }
+
+        .main-quote {
+            background: #f8bbd0;
+            padding: 40px 20px;
+            border-radius: 20px;
+            text-align: center;
+            margin-top: 30px;
+            border: 2px solid #f48fb1;
+        }
+
+        .main-quote p {
+            font-size: 26px;
+            font-style: italic;
+            color: #880e4f;
+            font-weight: bold;
+        }
+
+        /* =========================
+            FOOTER
+        ========================= */
+
+        footer {
+            background: #f8bbd0;
+            text-align: center;
+            padding: 25px;
+            color: #880e4f;
+            border-top: 2px solid #f48fb1;
+            font-weight: bold;
+        }
+
+        /* =========================
+            MOBILE APP DESIGN
+        ========================= */
+
+        @media (max-width: 600px) {
+            body {
+                padding-bottom: 72px;
+            }
+
+            nav {
+                position: sticky;
+                top: 0;
+                padding: 15px 10px;
+                height: 62px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border-bottom: 2px solid #f48fb1;
+                box-shadow: 0 3px 15px rgba(244, 143, 177, 0.2);
+            }
+
+            nav a {
+                display: none;
+            }
+
+            nav::before {
+                content: "🦔 Princess Diane 🌸";
+                color: #880e4f;
+                font-size: 19px;
+                font-weight: bold;
+            }
+
+            #home {
+                min-height: calc(100vh - 62px);
+                padding: 40px 20px;
+            }
+
+            .home-content {
+                width: 100%;
+            }
+
+            .heart {
+                font-size: 38px;
+            }
+
+            .home-content h1 {
+                font-size: 35px;
+                line-height: 1.2;
+            }
+
+            .home-content p {
+                font-size: 16px;
+                line-height: 1.5;
+                margin-bottom: 25px;
+            }
+
+            .view-button {
+                width: 85%;
+                max-width: 300px;
+                padding: 15px;
+                font-size: 16px;
+            }
+
+            #about {
+                padding: 30px 15px;
+            }
+
+            .about {
+                padding: 30px 20px;
+                border-radius: 22px;
+            }
+
+            .about h1 {
+                font-size: 29px;
+                margin-bottom: 20px;
+            }
+
+            .about h2 {
+                font-size: 21px;
+            }
+
+            .about p {
+                font-size: 15px;
+                line-height: 1.7;
+            }
+
+            #album {
+                padding: 30px 12px;
+            }
+
+            .album h1 {
+                font-size: 27px;
+                margin-bottom: 20px;
+                line-height: 1.3;
+            }
+
+            .search-container {
+                margin-bottom: 30px;
+            }
+
+            #searchInput {
+                padding: 15px 48px 15px 18px;
+                font-size: 15px;
+                border-radius: 25px;
+            }
+
+            .search-icon {
+                right: 18px;
+            }
+
+            .search-result {
+                margin-top: -15px;
+                margin-bottom: 20px;
+            }
+
+            .photo-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 12px;
+            }
+
+            .photo-card {
+                padding: 7px;
+                border-radius: 13px;
+                box-shadow: 0 3px 12px rgba(244, 143, 177, 0.25);
+            }
+
+            .photo-card:hover {
+                transform: none;
+            }
+
+            .photo-card:active {
+                transform: scale(0.97);
+            }
+
+            .photo-card img {
+                height: 210px;
+                border-radius: 9px;
+            }
+
+            .photo-card h3 {
+                font-size: 14px;
+                margin-top: 10px;
+            }
+
+            .photo-card p {
+                font-size: 11px;
+                line-height: 1.4;
+                margin-top: 5px;
+                margin-bottom: 5px;
+            }
+
+            #memories {
+                padding: 30px 15px;
+            }
+
+            .memories-container h1 {
+                font-size: 29px;
+                margin-bottom: 25px;
+            }
+
+            .memory-card {
+                padding: 23px 18px;
+                margin-bottom: 15px;
+                border-radius: 18px;
+            }
+
+            .memory-card h2 {
+                font-size: 20px;
+            }
+
+            .memory-card p {
+                font-size: 14px;
+                line-height: 1.6;
+            }
+
+            .main-quote {
+                padding: 30px 15px;
+            }
+
+            .main-quote p {
+                font-size: 21px;
+            }
+
+            footer {
+                display: none;
+            }
+
+            body::after {
+                content: "";
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                width: 100%;
+                height: 68px;
+                background: #f8bbd0;
+                box-shadow: 0 -3px 15px rgba(244, 143, 177, 0.3);
+                z-index: 98;
+                border-top: 2px solid #f48fb1;
+            }
+
+            .mobile-nav {
+                display: flex;
+            }
+        }
+
+        .mobile-nav {
+            display: none;
+        }
+
+        @media (max-width: 600px) {
+            .mobile-nav {
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                width: 100%;
+                height: 68px;
+                background: #f8bbd0;
+                z-index: 99;
+                display: flex;
+                justify-content: space-around;
+                align-items: center;
+                padding: 5px 8px;
+                border-top: 2px solid #f48fb1;
+            }
+
+            .mobile-nav button {
+                border: none;
+                background: transparent;
+                color: #880e4f;
+                font-size: 11px;
+                font-weight: bold;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                gap: 3px;
+                min-width: 60px;
+                height: 58px;
+                cursor: pointer;
+            }
+
+            .mobile-nav button span {
+                font-size: 23px;
+                line-height: 22px;
+            }
+
+            .mobile-nav button.active-nav {
+                color: #ec407a;
+            }
+
+            .mobile-nav button:active {
+                transform: scale(0.9);
+            }
+        }
+
+        @media (max-width: 380px) {
+            .home-content h1 {
+                font-size: 30px;
+            }
+
+            .photo-grid {
+                gap: 9px;
+            }
+
+            .photo-card img {
+                height: 180px;
+            }
+
+            .photo-card h3 {
+                font-size: 12px;
+            }
+
+            .photo-card p {
+                font-size: 10px;
+            }
+
+            .mobile-nav button {
+                min-width: 50px;
+                font-size: 10px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav>
+        <a onclick="showPage('home')">Home</a>
+        <a onclick="showPage('about')">About</a>
+        <a onclick="showPage('album')">Album</a>
+        <a onclick="showPage('memories')">Memories</a>
+    </nav>
+
+    <section id="home" class="page active">
+        <div class="home-content">
+            <div class="capy-badge">🦔💖🌸</div>
+            <h1>Princess Diane</h1>
+            <p>A Cute Collection of Pink Memories & Capybara Vibes</p>
+            <div class="heart">🌸</div>
+            <a class="view-button" onclick="showPage('album')">View Album</a>
+        </div>
+    </section>
+
+    <section id="about" class="page">
+        <div class="about">
+            <div class="about-heart">🦔🌸</div>
+            <h1>About Princess Diane</h1>
+            <p>Welcome to Princess Diane's cute pink photo album! This website is a special place filled with charming moments, sweet capybaras, and lovely memories worth keeping.</p>
+            <br>
+            <p>Every picture tells a story, and every smile shines as bright as a sunny day. This album was created to cherish those moments forever in soft pink style.</p>
+            <br>
+            <h2>Beautiful Inside & Out</h2>
+            <p>A cute pink collection created with love, featuring capybaras, happiness, and unforgettable highlights.</p>
+        </div>
+    </section>
+
+    <section id="album" class="page">
+        <div class="album">
+            <h1>Princess Diane's Beauty Album 🌸</h1>
+
+            <div class="search-container">
+                <input type="text" id="searchInput" placeholder="Search for a photo..." onkeyup="searchPhotos()">
+                <span class="search-icon">⌕</span>
+            </div>
+
+            <div class="search-result" id="searchResult">
+                Showing all photos
+            </div>
+
+            <div class="photo-grid" id="photoGrid">
+
+                <!-- Beach Picture -->
+                <div class="photo-card" onclick="showMessage(&quot;Standing by the ocean with the breeze in your hair—you shine brighter than the sunshine on the water. Every beach day is instantly better with you around&quot;)">
+                    <img src="incheng1.jpg" alt="Princess Diane Beach">
+                    <h3>Beach Vibes 🌊</h3>
+                    <p>Soaking up the sun in style.</p>
+                </div>
+
+                <!-- Red Top Portrait -->
+                <div class="photo-card" onclick="showMessage(&quot;Every single time I look at this picture, I can't help but fall for your smile all over again. You have this effortless grace that just lights up the whole room&quot;)">
+                    <img src="incheng2.jpg" alt="Princess Diane Portrait">
+                    <h3>Glow Up ✨</h3>
+                    <p>A look worth remembering.</p>
+                </div>
+
+                <!-- Sunglasses Hiking -->
+                <div class="photo-card" onclick="showMessage(&quot;Rocking those cute sunglasses and ready for any trail! Your energy and love for adventure make every journey together so much fun&quot;)">
+                    <img src="incheng3.jpg" alt="Princess Diane Hiking Fun">
+                    <h3>Adventure Time 🎒</h3>
+                    <p>Fun hiking energy!</p>
+                </div>
+
+                <!-- Outdoor Selfie -->
+                <div class="photo-card" onclick="showMessage(&quot;Looks like such a perfect day under the blue skies. But if I'm being honest, your happy smile is what really makes this photo so special&quot;)">
+                    <img src="incheng4.jpg" alt="Princess Diane Outdoor">
+                    <h3>Sunny Trails ☀</h3>
+                    <p>A beautiful day outdoors.</p>
+                </div>
+
+                <!-- Sitting on Mountain -->
+                <div class="photo-card" onclick="showMessage(&quot;The mountain backdrop is breathtaking, but my eyes still go straight to you. You really have a way of catching my attention, hehe&quot;)">
+                    <img src="incheng5.jpg" alt="Princess Diane Mountain Peak">
+                    <h3>Peak View ⛰️</h3>
+                    <p>Relaxing at the summit.</p>
+                </div>
+
+                <!-- Peak 3 Sign -->
+                <div class="photo-card" onclick="showMessage(&quot;Conquered Peak 3! Seeing you make it to the top shows how impressive and capable you are. I'm really proud of you&quot;)">
+                    <img src="incheng6.jpg" alt="Princess Diane Peak 3">
+                    <h3>Peak 3 Conqueror 🏆</h3>
+                    <p>Standing tall at the peak.</p>
+                </div>
+
+                <!-- Mirror Reflection Close Up -->
+                <div class="photo-card" onclick="showMessage(&quot;Just a sweet little reminder of how lovely you are. I don't know if you notice, but I definitely have a soft spot for you and your kind heart&quot;)">
+                    <img src="incheng7.jpg" alt="Princess Diane Close Up">
+                    <h3>Soft & Cute 💕</h3>
+                    <p>Pretty details up close.</p>
+                </div>
+
+                <!-- Evening Look with Lanyard -->
+                <div class="photo-card" onclick="showMessage(&quot;All dressed up and glowing under the evening lights! You look absolutely stunning here... kind of hard not to stare, to be honest&quot;)">
+                    <img src="incheng8.jpg" alt="Princess Diane Evening Look">
+                    <h3>Evening Charm 🌙</h3>
+                    <p>Night lights & sweet smiles.</p>
+                </div>
+
+            </div>
+
+            <div id="noResults">
+                <h2>No photo found</h2>
+                <p>Try searching another keyword or caption.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- MESSAGE POPUP MODAL -->
+    <div id="messageModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeMessage()">&times;</span>
+            <div class="heart">🦔🌸</div>
+            <p id="modalText"></p>
+        </div>
+    </div>
+
+    <section id="memories" class="page">
+        <div class="memories-container">
+            <h1>🌸 Cute Memories 🦔</h1>
+
+            <div class="memory-card">
+                <h2>🦔 Capybara Chill</h2>
+                <p>Living life relaxed, calm, and cozy just like a capybara relaxing in a warm pink spring.</p>
+            </div>
+
+            <div class="memory-card">
+                <h2>Sweet Moments</h2>
+                <p>Some moments may seem simple, but they become extra special with a touch of pink and joy.</p>
+            </div>
+
+            <div class="memory-card">
+                <h2>Beautiful Days</h2>
+                <p>Every smile, photo, and sweet capybara memory brings warmth and happiness.</p>
+            </div>
+
+            <div class="memory-card">
+                <h2>Forever Remembered</h2>
+                <p>Memories stay with us like sweet little keepsakes that always make us smile.</p>
+            </div>
+
+            <div class="main-quote">
+                <p>"Pretty, cute, and full of capybara chill!"</p>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <p>Made with love & capybaras for Princess Diane 🦔💖</p>
+    </footer>
+
+    <div class="mobile-nav">
+        <button id="nav-home" class="active-nav" onclick="showPage('home')">
+            <span>⌂</span>Home
+        </button>
+        <button id="nav-about" onclick="showPage('about')">
+            <span>🌸</span>About
+        </button>
+        <button id="nav-album" onclick="showPage('album')">
+            <span>▦</span>Album
+        </button>
+        <button id="nav-memories" onclick="showPage('memories')">
+            <span>🦔</span>Memories
+        </button>
+    </div>
+
+    <script>
+        function showPage(pageName) {
+            const pages = document.querySelectorAll(".page");
+            pages.forEach(function(page) {
+                page.classList.remove("active");
+            });
+
+            const selectedPage = document.getElementById(pageName);
+            selectedPage.classList.add("active");
+
+            const navButtons = document.querySelectorAll(".mobile-nav button");
+            navButtons.forEach(function(button) {
+                button.classList.remove("active-nav");
+            });
+
+            const activeButton = document.getElementById("nav-" + pageName);
+            if (activeButton) {
+                activeButton.classList.add("active-nav");
+            }
+
+            window.scrollTo({
+                top: 0,
+                behavior: "smooth"
+            });
+        }
+
+        function showMessage(text) {
+            const modal = document.getElementById("messageModal");
+            const modalText = document.getElementById("modalText");
+            modalText.textContent = text;
+            modal.style.display = "flex";
+        }
+
+        function closeMessage() {
+            const modal = document.getElementById("messageModal");
+            modal.style.display = "none";
+        }
+
+        window.onclick = function(event) {
+            const modal = document.getElementById("messageModal");
+            if (event.target === modal) {
+                modal.style.display = "none";
+            }
+        }
+
+        function searchPhotos() {
+            const input = document.getElementById("searchInput");
+            const searchText = input.value.toLowerCase().trim();
+            const cards = document.querySelectorAll(".photo-card");
+            let foundPhotos = 0;
+
+            cards.forEach(function(card) {
+                const title = card.querySelector("h3").textContent.toLowerCase();
+                const caption = card.querySelector("p").textContent.toLowerCase();
+                const image = card.querySelector("img").alt.toLowerCase();
+
+                if (title.includes(searchText) || caption.includes(searchText) || image.includes(searchText)) {
+                    card.style.display = "block";
+                    foundPhotos++;
+                } else {
+                    card.style.display = "none";
+                }
+            });
+
+            const result = document.getElementById("searchResult");
+            const noResults = document.getElementById("noResults");
+
+            if (searchText === "") {
+                result.textContent = "Showing all photos";
+            } else {
+                result.textContent = foundPhotos + " photo(s) found";
+            }
+
+            if (foundPhotos === 0) {
+                noResults.style.display = "block";
+            } else {
+                noResults.style.display = "none";
+            }
+        }
+    </script>
+
+</body>
+</html>
